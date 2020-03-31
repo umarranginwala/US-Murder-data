@@ -1,0 +1,140 @@
+---
+title: "AM5_Murder Dataset Exercise"
+author: "Umar Ranginwala"
+date: "31/03/2020"
+output:
+  html_document:
+    theme: united
+    highlight: tango
+    df_print: paged
+---
+
+# 1.Get the murder Data
+```{r}
+library(dplyr)
+library(dslabs)
+
+murder <- data.frame(murders)
+head(murder,10)
+
+
+```
+# 2. Do the basic Exploration of the data (like number of rows, number of columns, structure and name of data)
+
+```{r}
+str(murder)
+names(murder)
+```
+> There are 51 observation, meaning there is data for 51 States. The state column has character varibales in the form of state names of the US, the abb column which stands for abbreviation of the states also has character variables. The region column is a factor variable with four values. The population column has numeric variables and contains population of each state, the total column contains the total murders due to gun violence in each state
+
+```{r}
+#Number of Columns
+
+ncol(murder)
+
+#There are five columns in the dataset
+
+
+#Number of Rows
+
+nrow(murder)
+
+#There are 51 rows in the dataset
+
+```
+
+# 3. Which three states have higest population 
+```{r}
+
+popsorted <- murder[order(murder$population, decreasing = TRUE),]
+head(popsorted,3)
+
+```
+> The three states which has the higest population are California, Texas and Florida. California has a population of 37.25 million
+
+# 4. How many states have more than average population 
+```{r}
+length(murder[murder$population>mean(murder$population),])
+```
+> Five states have more than the average population
+
+# 5. What is the total population of US (actual numbers and in millions)
+```{r}
+
+#Total population actual numbers
+population_innumbers=sum(murder$population)
+population_innumbers
+
+population_in_millions= (sum(murder$population))/1000000
+population_in_millions
+
+```
+> The total population of US is 309864228, the total population of the US is 309.8642 million
+
+# 6. What is the total number of murders across US?
+```{r}
+sum(murder$total)
+```
+> The total murders in the US due to gun violence in 2010 stood at 9403
+
+# 7. What is the average number of murders across US?
+```{r}
+mean(murder$total)
+```
+> The average number of murders across the US states is 184.3725
+
+
+# 8. What is the total number of murders in South region 
+```{r}
+
+m2 <- group_by(murder,region="South")
+
+ab2 <- summarise(m2, murdertotal=sum(total, na.rm=TRUE))
+
+ab2 <- data.frame(ab2)
+
+ab2
+
+```
+> The total number of murders in South region is 9403
+
+# 9. How many states are there in each region
+```{r}
+
+table(murder$region)
+
+```
+> There are 17 states in South region, whereas there are 13 states in the West region. 
+
+# 10. What is the murder rate across each region
+```{r}
+
+murder_rate_per_100K <- (murder$total/murder$population)*100000
+murder_rate_per_100K
+
+murder$murder_rate_per_100K<-murder_rate_per_100K
+head(murder)
+
+m3 <- group_by(murder,region)
+
+ab3 <- summarise(m3, murdertotal=sum(murder_rate_per_100K, na.rm=TRUE))
+
+ab3 <- data.frame(ab3)
+
+ab3
+
+
+```
+> The murder rate per 100,000 across the four region is displayed. The highest is for the South region with 75 deaths due to gun violence per 100,000 people
+
+# 11. Which is the most dangerous state
+```{r}
+
+murderratesorted<- murder[order(murder$murder_rate_per_100K, decreasing = TRUE),]
+head(murderratesorted,1)
+
+```
+> The most dangerous state in the US in terms of murders due to gun violence is District of Columbia, it has the highest murder rate of 16.45 per 100,000 people. 
+
+
+
